@@ -5,7 +5,7 @@ metadata:
   annotations:
     reloader.stakater.com/auto: "true"
 spec:
-  replicas: 1 # 복제본 1개
+  replicas: 3 # 복제본 1개
   selector:
     matchLabels:
       app: k8s-api-gateway # template label 이름과 동일해야함
