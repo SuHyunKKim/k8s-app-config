@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-api-gateway-deployment # deployment의 이름
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1 # 복제본 1개
+  selector:
+    matchLabels:
+      app: k8s-api-gateway # template label 이름과 동일해야함
+  template:
+    metadata:
+      labels:
+        app: k8s-api-gateway
+    spec:
+      containers:
+      - name: k8s-api-gateway # 컨테이너 이름
+        image: suhyunkim7288/k8s-api-gateway:0.0.5 # 사용할 이미지
+        imagePullPolicy: Always
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: dev
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - mountPath: /etc/config
+            name: api-gateway-config-volume
+          - mountPath: /etc/secret
+            name: api-gateway-secret-volume
+
+      volumes:
+        - name: api-gateway-config-volume
+          configMap:
+            name: api-gateway-config
+            items:
+              - key: application-dev.yml
+                path: application-dev.yml
+        - name: api-gateway-secret-volume
+          secret:
+            secretName: api-gateway-secret
+            items:
+              - key: application-secret.yml
+                path: application-secret.yml
